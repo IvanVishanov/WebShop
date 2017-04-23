@@ -1,0 +1,3 @@
+app:
+    resource: '@WebShopBundle/Controller/'
+    type: annotation
