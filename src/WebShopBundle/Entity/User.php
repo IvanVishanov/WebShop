@@ -2,6 +2,7 @@
 
 namespace WebShopBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,6 +15,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+        $this->products = new ArrayCollection();
+        $this->cart = [];
+    }
+
+    public function __toString()
+    {
+        return $this->getUsername();
+    }
+
     /**
      * @var int
      *
@@ -35,6 +48,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=100)
+     * @Assert\NotBlank()
      */
     private $password;
 
@@ -42,6 +56,8 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255, unique=true)
+     * @Assert\NotBlank()
+     * @Assert\Email()
      */
     private $email;
 
@@ -49,6 +65,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="firstName", type="string", length=100)
+     * @Assert\NotBlank()
      */
     private $firstName;
 
@@ -56,10 +73,32 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="lastName", type="string", length=100)
+     * @Assert\NotBlank()
      */
     private $lastName;
 
+    /**
+     * @var Role[]/ArrayCollection
+     * @ORM\ManyToMany(targetEntity="WebShopBundle\Entity\Role",inversedBy="users")
+     * @ORM\JoinTable(name="user_roles",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="role_id",referencedColumnName="id")}
+     *      )
+     */
+    private $roles;
 
+    /**
+     * @var Product[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="WebShopBundle\Entity\Product",mappedBy="seller")
+     */
+    private $products;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="cart",type="array")
+     */
+    private $cart;
     /**
      * Get id
      *
@@ -208,7 +247,9 @@ class User implements UserInterface
      */
     public function getRoles()
     {
-        return ['ROLE_USER'];
+        return array_map(function (Role $r) {
+            return $r->getName();
+        }, $this->roles->toArray());
     }
 
     /**
@@ -233,5 +274,42 @@ class User implements UserInterface
     {
         // TODO: Implement eraseCredentials() method.
     }
+
+    public function addRole($userRole)
+    {
+        $this->roles[] = $userRole;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getProducts()
+    {
+        return $this->products;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCart(): array
+    {
+        return $this->cart;
+    }
+
+    /**
+     * @param array $cart
+     */
+    public function setCart(array $cart)
+    {
+        $this->cart = $cart;
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function addCart(Product $product){
+        $this->cart[] = $product;
+    }
+
 }
 

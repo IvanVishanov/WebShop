@@ -2,7 +2,9 @@
 
 namespace WebShopBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\Role\RoleInterface;
 
 /**
  * Role
@@ -10,8 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="role")
  * @ORM\Entity(repositoryClass="WebShopBundle\Repository\RoleRepository")
  */
-class Role
+class Role implements RoleInterface
 {
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
+
     /**
      * @var int
      *
@@ -28,6 +35,11 @@ class Role
      */
     private $name;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="WebShopBundle\Entity\User",mappedBy="roles")
+     */
+    private $users;
 
     /**
      * Get id
@@ -61,6 +73,21 @@ class Role
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Returns the role.
+     *
+     * This method returns a string representation whenever possible.
+     *
+     * When the role cannot be represented with sufficient precision by a
+     * string, it should return null.
+     *
+     * @return string|null A string representation of the role, or null
+     */
+    public function getRole()
+    {
+        // TODO: Implement getRole() method.
     }
 }
 

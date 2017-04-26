@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <table class="table">
+            <div typeof="number">asd</div>
+            <thead>
+            <tr>
+                <th class="col-md-1"></th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td><img src="{{ asset('uploads/images/' ~ product.image) }}" class="img-responsive center-block"
+                             style="width: 100%" alt="Image"></td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.price*product.quantity }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+{% endblock %}

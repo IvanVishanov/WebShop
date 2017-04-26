@@ -1,5 +1,63 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    HERE
+    <div class="container">
+        <div class="row">
+            {% for product in products %}
+            <div class="col-sm-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">{{ product.name }}<span class="pull-right">Category: {{ product.category }}</span></div>
+                    <div class="panel-body"><img src="{{ asset('uploads/images/' ~ product.image) }}" class="img-responsive"
+                                                 style="width:100%" alt="Image"></div>
+                    <div class="panel-footer text-center"><span class="pull-left">Seller: {{ product.seller }}</span><span><a href="{{ path('cart_add',{'id':product.id}) }}">Add to cart</a></span><span class="pull-right">Price: {{ product.price }}</span></div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="col-sm-4">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">BLACK FRIDAY DEAL</div>
+                    <div class="panel-body"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive"
+                                                 style="width:100%" alt="Image"></div>
+                    <div class="panel-footer">Buy 50 mobiles and get a gift card</div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-success">
+                    <div class="panel-heading">BLACK FRIDAY DEAL</div>
+                    <div class="panel-body"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive"
+                                                 style="width:100%" alt="Image"></div>
+                    <div class="panel-footer">Buy 50 mobiles and get a gift card</div>
+                </div>
+            </div>
+        </div>
+    </div><br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">BLACK FRIDAY DEAL</div>
+                    <div class="panel-body"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive"
+                                                 style="width:100%" alt="Image"></div>
+                    <div class="panel-footer">Buy 50 mobiles and get a gift card</div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">BLACK FRIDAY DEAL</div>
+                    <div class="panel-body"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive"
+                                                 style="width:100%" alt="Image"></div>
+                    <div class="panel-footer">Buy 50 mobiles and get a gift card</div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">BLACK FRIDAY DEAL</div>
+                    <div class="panel-body"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive"
+                                                 style="width:100%" alt="Image"></div>
+                    <div class="panel-footer">Buy 50 mobiles and get a gift card</div>
+                </div>
+            </div>
+        </div>
+    </div><br><br>
 {% endblock %}
