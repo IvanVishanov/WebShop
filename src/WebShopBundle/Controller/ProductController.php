@@ -110,7 +110,15 @@ class ProductController extends Controller
 
         $user = $this->getUser();
         $cart = $user->getCart();
+        if($user->getCash()- $cart->getTotal()<0){
+            $this->addFlash(
+                'error',
+                'You do not have enough money'
+            );
+            $this->redirectToRoute('cart');
+        }
         $user->setCash($user->getCash() - $cart->getTotal());
+
         $quantities = $cart->getQuantities();
         $boughtProducts = $user->getBoughtProduct();
 
@@ -146,12 +154,17 @@ class ProductController extends Controller
     }
 
     /**
-     * @Route("/products/sell/{id}", name="products_sell")
+     * @Route("/products/sell/{id}/{token}", name="products_sell")
      * @param BoughtProducts $boughtProduct
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function sellProduct(BoughtProducts $boughtProduct = null, Request $request)
+    public function sellProduct(BoughtProducts $boughtProduct = null, Request $request,$token)
     {
+        if (!$this->isCsrfTokenValid('user', $token)) {
+            $this->get('security.csrf.token_manager')->refreshToken('user');
+            return $this->redirectToRoute('user_profile');
+        }
+
         if ($this->getUser() != $boughtProduct->getUser()) {
             return $this->redirectToRoute("user_profile");
         }
@@ -178,10 +191,15 @@ class ProductController extends Controller
     }
 
     /**
-     * @Route("/products/sell/view/{id}", name="products_sell_view")
+     * @Route("/products/sell/view/{id}/{token}", name="products_sell_view")
      */
-    public function sellProductView(BoughtProducts $boughtProduct = null)
+    public function sellProductView(BoughtProducts $boughtProduct = null,$token)
     {
+        if (!$this->isCsrfTokenValid('user', $token)) {
+            $this->get('security.csrf.token_manager')->refreshToken('user');
+            return $this->redirectToRoute('user_profile');
+        }
+
         if($boughtProduct == null){
             return $this->redirectToRoute("user_profile");
         }
@@ -189,6 +207,6 @@ class ProductController extends Controller
             return $this->redirectToRoute("user_profile");
         }
 
-        return $this->render("product/sell.html.twig", ['product' => $boughtProduct]);
+        return $this->render("product/sell.html.twig", ['product' => $boughtProduct,'token'=>$token]);
     }
 }

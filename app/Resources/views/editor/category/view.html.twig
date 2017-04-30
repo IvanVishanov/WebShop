@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Categories{% endblock %}
 {% block body %}
     <div class="container">
         <table class="table">
@@ -17,10 +17,10 @@
                     <td>{{ category.products|length }}</td>
                     {% if category.deleted %}
                         <td ><a class="btn btn-success"
-                                href="{{ path('category_restore',{'id':category.id}) }}">Restore</a></td>
+                                href="{{ path('category_restore',{'id':category.id,'token':token}) }}">Restore</a></td>
                     {% else %}
                         <td ><a class="btn btn-warning"
-                                href="{{ path('category_delete',{'id':category.id}) }}">Remove</a></td>
+                                href="{{ path('category_delete',{'id':category.id,'token':token}) }}">Remove</a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
@@ -38,7 +38,7 @@
             <tr>
                 <td colspan="6">
                     <a class="btn btn-success"
-                       href="{{ path('category_add') }}">Add</a>
+                       href="{{ path('category_add',{'token':token}) }}">Add</a>
                 </td>
             </tr>
             </tfoot>

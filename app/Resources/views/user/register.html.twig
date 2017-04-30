@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Register{% endblock %}
 {% block body %}
     <div class="center-block">
-        <div class="col-md-4">
+        <div class="col-md-offset-4 col-md-4">
             {{ form_start(form) }}
             {{ form_widget(form) }}
             <button type="submit" value="Register">Register</button>

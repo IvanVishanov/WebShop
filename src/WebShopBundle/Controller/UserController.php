@@ -50,19 +50,27 @@ class UserController extends Controller
         $products = $user->getProducts();
         $boughtProducts = $user->getBoughtProduct();
 
+        $token = $this->get('security.csrf.token_manager')->refreshToken('user');
+
         foreach ($boughtProducts as $boughtProduct) {
-            if($boughtProduct->getQuantity()<=0){
+            if ($boughtProduct->getQuantity() <= 0) {
                 $this->getUser()->removeBoughtProduct($boughtProduct);
             }
         }
-        return $this->render('user/profile.html.twig', ['user' => $user, 'products' => $products, 'boughProducts' => $boughtProducts]);
+        return $this->render('user/profile.html.twig', [
+            'user' => $user,
+            'products' => $products,
+            'boughProducts' => $boughtProducts,
+            'token' => $token
+        ]);
     }
 
     /**
-     * @Route("/profile/edit",name="user_editprofile")
+     * @Route("/profile/edit/",name="user_editprofile")
      */
-    public function profileEditAction(Request $request)
+    public function profileEditAction(Request $request )
     {
+
         $user = $this->getUser();
         $form = $this->createForm(UserType::class, $user);
         $currentPassword = $user->getPassword();

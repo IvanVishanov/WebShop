@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Profile{% endblock %}
 {% block body %}
     <div class="container body-content">
         <div class="center-block" style=" width: 400px">
@@ -29,7 +29,7 @@
                 </tr>
             </table>
             <div>
-                <a class="btn btn-success" style="width: 100%" href="{{ path('user_editprofile') }}">Edit Profile</a>
+                <a class="btn btn-primary" style="width: 100%" href="{{ path('user_editprofile') }}">Edit Profile</a>
             </div>
         </div>
     </div>
@@ -57,7 +57,7 @@
                                  style="width: 100%" alt="Image"></td>
                         <td>{{ boughtProduct.product.name }}</td>
                         <td>{{ boughtProduct.quantity }}</td>
-                        <td><a href="{{ path('products_sell_view', {'id': boughtProduct.id}) }}">Sell</a></td>
+                        <td><a href="{{ path('products_sell_view', {'id': boughtProduct.id,'token': token}) }}">Sell</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>

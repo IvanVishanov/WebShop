@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Edit User{% endblock %}
 {% block body %}
     <div class="container body-content" >
         <div class="center-block" style=" width: 400px">
@@ -45,6 +45,44 @@
                 </div>
                 {{  form_row(form._token) }}
             </form>
+        </div>
+    </div>
+    <hr>
+    <div class="container body-content">
+        <div class="col-md-offset-2 col-md-8">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="col-md-2"></th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for boughtProduct in boughtProducts %}
+                    <tr>
+                        <td><img src="{{ asset('uploads/images/' ~ boughtProduct.product.image) }}"
+                                 class="img-responsive center-block"
+                                 style="width: 100%" alt="Image"></td>
+                        <td>{{ boughtProduct.product.name }}</td>
+                        <td>{{ boughtProduct.quantity }}</td>
+                        <td><a href="{{ path('admin_delete_boughtProduct', {'boughtProductId':boughtProduct.id, 'userId': user.id}) }}">Delete</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr class="text-center">
+                    {% for flash_message in app.session.flashBag.get('error') %}
+                        <td colspan="6">
+                            <div class="flash-notice">
+                                {{ flash_message }}
+                            </div>
+                        </td>
+                    {% endfor %}
+                </tr>
+                </tfoot>
+            </table>
         </div>
     </div>
 {% endblock %}

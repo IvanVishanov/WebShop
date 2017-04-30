@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Products{% endblock %}
 {% block body %}
     <div class="container">
         <div class="row">
@@ -27,14 +27,14 @@
                         <td>{{ product.price }}</td>
                         <td>{{ product.deleted }}</td>
                         <td>
-                            <a href="{{ path('editor_products_edit',{'id':product.id}) }}">Edit</a>
+                            <a class="btn btn-primary" href="{{ path('editor_products_edit',{'id':product.id,'token':token}) }}">Edit</a>
 
                             {% if product.deleted == false %}
-                            <a href="{{ path('editor_products_delete',{'id':product.id}) }}">Delete</a>
+                            <a class="btn btn-warning" href="{{ path('editor_products_delete',{'id':product.id,'token':token}) }}">Remove</a>
                             {% elseif product.category.deleted %}
                                 Category is deleted
                             {% else %}
-                                <a href="{{ path('editor_products_restore',{'id':product.id}) }}">Restore</a>
+                                <a class="btn btn-success" href="{{ path('editor_products_restore',{'id':product.id,'token':token}) }}">Restore</a>
                             {% endif %}
                         </td>
                     </tr>

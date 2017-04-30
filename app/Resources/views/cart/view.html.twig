@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Cart{% endblock %}
 {% block body %}
     <div class="container">
         <form class="form-horizontal" action="{{ path('cart_reload') }}" method="post">

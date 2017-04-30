@@ -13,11 +13,16 @@ use WebShopBundle\Form\CategoryType;
 class CategoryController extends Controller
 {
     /**
-     * @Route("/categories/add",name="category_add")
+     * @Route("/categories/add/{token}",name="category_add")
      * @Security("has_role('ROLE_MOD')")
      */
-    public function addCategory(Request $request)
+    public function addCategory(Request $request,$token)
     {
+        if (!$this->isCsrfTokenValid('category', $token)) {
+            $this->get('security.csrf.token_manager')->refreshToken('category');
+            return $this->redirectToRoute('category_view');
+        }
+
         $category = new Category();
         $form = $this->createForm(CategoryType::class, $category);
 
@@ -54,16 +59,27 @@ class CategoryController extends Controller
     {
 
         $categories = $this->getDoctrine()->getRepository(Category::class)->findAll();
-        return $this->render("editor/category/view.html.twig", ['categories' => $categories]);
+
+        $token = $this->get('security.csrf.token_manager')->refreshToken('category');
+
+        return $this->render("editor/category/view.html.twig", ['categories' => $categories,'token'=>$token]);
     }
 
     /**
      * @param Category $category
-     * @Route("/categories/delete{id}",name="category_delete")
+     * @Route("/categories/delete/{id}/{token}", name="category_delete")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function removeCategory(Category $category)
+    public function removeCategory(Category $category = null,$token)
     {
+        if (!$this->isCsrfTokenValid('category', $token)) {
+            $this->get('security.csrf.token_manager')->refreshToken('category');
+            return $this->redirectToRoute('category_view');
+        }
+        if($category == null){
+            return $this->redirectToRoute('category_view');
+        }
+
         $category->setDeleted(true);
 
         $em = $this->getDoctrine()->getManager();
@@ -78,11 +94,20 @@ class CategoryController extends Controller
 
     /**
      * @param Category $category
-     * @Route("/categories/restore{id}",name="category_restore")
+     * @Route("/categories/restore/{id}/{token}",name="category_restore")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function restoreCategory(Category $category)
+    public function restoreCategory(Category $category = null,$token)
     {
+        if (!$this->isCsrfTokenValid('category', $token)) {
+            $this->get('security.csrf.token_manager')->refreshToken('category');
+            return $this->redirectToRoute('category_view');
+        }
+
+        if($category == null){
+            return $this->redirectToRoute('category_view');
+        }
+
         $category->setDeleted(false);
 
         $em = $this->getDoctrine()->getManager();
