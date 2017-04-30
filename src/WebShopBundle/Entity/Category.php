@@ -4,12 +4,14 @@ namespace WebShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Category
  *
  * @ORM\Table(name="category")
  * @ORM\Entity(repositoryClass="WebShopBundle\Repository\CategoryRepository")
+ *
  */
 class Category
 {
@@ -26,8 +28,16 @@ class Category
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @Assert\NotBlank()
      */
     private $name;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="deleted", type="boolean", nullable=true)
+     */
+    private $deleted = false;
 
     /**
      * @var Product[]|ArrayCollection
@@ -80,6 +90,22 @@ class Category
     public function __toString()
     {
         return $this->getName();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * @param bool $deleted
+     */
+    public function setDeleted( $deleted)
+    {
+        $this->deleted = $deleted;
     }
 }
 

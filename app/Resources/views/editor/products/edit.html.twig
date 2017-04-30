@@ -8,14 +8,17 @@
             {{ form_row(form.price) }}
             {{ form_row(form.quantity) }}
             {{ form_row(form.description) }}
-            <select name="product[category]">
-            {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
-            {% endfor %}
+            <label for="product_category"> Category: </label>
+            <select id="product_category" name="product[category]">
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
             </select>
-            {{ form_row(form.image) }}
+            <br>
+            <input type="file" id="product_image" name="product[image]">
+            <br>
             {{ form_row(form._token) }}
-            <button type="submit" value="Register">Register</button>
+            <button type="submit" value="Register">Save Changes</button>
             {{ form_end(form, {'render_rest': false}) }}
         </div>
     </div>

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="col-md-1"></th>
+                    <th>Product</th>
+                    <th>Available Quantity</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Deleted</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td><img src="{{ asset('uploads/images/' ~ product.image) }}"
+                                 class="img-responsive center-block"
+                                 style="width: 100%" alt="Image"></td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ product.category.name }}</td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.deleted }}</td>
+                        <td>
+                            <a href="{{ path('editor_products_edit',{'id':product.id}) }}">Edit</a>
+
+                            {% if product.deleted == false %}
+                            <a href="{{ path('editor_products_delete',{'id':product.id}) }}">Delete</a>
+                            {% elseif product.category.deleted %}
+                                Category is deleted
+                            {% else %}
+                                <a href="{{ path('editor_products_restore',{'id':product.id}) }}">Restore</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tr class="text-center">
+                    {% for flash_message in app.session.flashBag.get('error') %}
+                        <td colspan="6">
+                            <div class="flash-notice">
+                                {{ flash_message }}
+                            </div>
+                        </td>
+                    {% endfor %}
+                </tr>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}
+

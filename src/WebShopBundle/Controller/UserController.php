@@ -47,9 +47,45 @@ class UserController extends Controller
          * @var User
          */
         $user = $this->getUser();
-        dump($user);
-       $product =  $user->getProducts();
-       dump($product);
-       return $this->render('user/profile.html.twig',['products'=>$product]);
+        $products = $user->getProducts();
+        $boughtProducts = $user->getBoughtProduct();
+
+        foreach ($boughtProducts as $boughtProduct) {
+            if($boughtProduct->getQuantity()<=0){
+                $this->getUser()->removeBoughtProduct($boughtProduct);
+            }
+        }
+        return $this->render('user/profile.html.twig', ['user' => $user, 'products' => $products, 'boughProducts' => $boughtProducts]);
+    }
+
+    /**
+     * @Route("/profile/edit",name="user_editprofile")
+     */
+    public function profileEditAction(Request $request)
+    {
+        $user = $this->getUser();
+        $form = $this->createForm(UserType::class, $user);
+        $currentPassword = $user->getPassword();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            if (empty($user->getPassword())) {
+                $user->setPassword($currentPassword);
+            } else {
+                $newPassword = $this->get('security.password_encoder')
+                    ->encodePassword($user, $user->getPassword());
+                $user->setPassword($newPassword);
+            }
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirectToRoute("user_profile");
+        }
+        return $this->render(
+            'user/editProfile.html.twig',
+            array('form' => $form->createView(),
+                'user' => $user
+            ));
     }
 }

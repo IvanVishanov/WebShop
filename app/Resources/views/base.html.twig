@@ -43,21 +43,34 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Logo</a>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
                 <li><a href="{{ path('homepage') }}">Home</a></li>
                 <li><a href="{{ path('products_all') }}">Products</a></li>
                 <li><a href="#">Deals</a></li>
-                <li><a href="#">Stores</a></li>
-                <li><a href="#">Contact</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if app.user %}
-                    <li><a href="{{ path('user_profile') }}"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
-                    <li><a href="{{ path('cart') }}"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
-                    <li><a href="{{ path('products_upload') }}"><span class="glyphicon glyphicon-shopping-cart"></span>Add Product</a></li>
+                    <li><a href="{{ path('user_profile') }}"><span class="glyphicon glyphicon-user"></span> Your Account</a>
+                    </li>
+                    <li><a href="{{ path('cart') }}"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a>
+                    </li>
+                    {% if is_granted("ROLE_MOD") %}
+                        <li>
+                            <a class="dropdown-toggle" data-toggle="dropdown">Admin
+                                <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ path('editor_products') }}">Products</a></li>
+                                <li><a href="{{ path('category_view') }}">Categories</a></li>
+                                {% if is_granted("ROLE_ADMIN") %}
+                                    <li><a href="{{ path('admin_users_all') }}">Users</a></li>
+                                {% endif %}
+                                <li><a href="{{ path('products_upload') }}"><span
+                                                class="glyphicon glyphicon-shopping-cart"></span>Add Product</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
                     <li><a href="{{ path('security_logout') }}">Logout</a></li>
                 {% else %}
                     <li><a href="{{ path('register') }}">Register</a></li>
@@ -75,14 +88,14 @@
 {% endblock %}
 {% block pageJavaScripts %}
     <script>
-        $(function(){
+        $(function () {
             // this will get the full URL at the address bar
             var url = window.location.href;
 
             // passes on every "a" tag
-            $("#myNavbar a").each(function() {
+            $("#myNavbar a").each(function () {
                 // checks if its the same on the address bar
-                if(url == (this.href)) {
+                if (url == (this.href)) {
                     $(this).closest("li").addClass("active");
                 }
             });

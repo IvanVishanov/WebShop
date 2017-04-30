@@ -10,4 +10,37 @@ namespace WebShopBundle\Repository;
  */
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function deleteProducts($categoryID)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $qb->update('WebShopBundle:Product','p')->set('p.deleted',$qb->expr()->literal(true))->where("p.category = $categoryID");
+        $query = $qb->getQuery();
+        $query->execute();
+    }
+
+    public function restoreProducts($categoryID)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        $qb->update('WebShopBundle:Product','p')->set('p.deleted',$qb->expr()->literal(null))->where("p.category = $categoryID");
+        $query = $qb->getQuery();
+        $query->execute();
+    }
+    public function findProductsWithQuantity()
+    {
+        $em = $this->getEntityManager();
+        $qb = $em->createQueryBuilder();
+
+        $q  = $qb->select(array('p'))
+            ->from('WebShopBundle:Product', 'p')
+            ->where(
+                $qb->expr()->gt('p.quantity', 0),
+                $qb->expr()->lt('p.deleted',1)
+            )
+            ->getQuery();
+
+        return $q->getResult();
+    }
+
 }

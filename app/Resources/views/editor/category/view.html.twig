@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Category</th>
+                <th>Products Count</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for category in categories %}
+                <tr>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.products|length }}</td>
+                    {% if category.deleted %}
+                        <td ><a class="btn btn-success"
+                                href="{{ path('category_restore',{'id':category.id}) }}">Restore</a></td>
+                    {% else %}
+                        <td ><a class="btn btn-warning"
+                                href="{{ path('category_delete',{'id':category.id}) }}">Remove</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr class="text-center">
+                {% for flash_message in app.session.flashBag.get('success') %}
+                    <td colspan="6">
+                        <div class="flash-notice">
+                            {{ flash_message }}
+                        </div>
+                    </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td colspan="6">
+                    <a class="btn btn-success"
+                       href="{{ path('category_add') }}">Add</a>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+{% endblock %}
+

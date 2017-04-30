@@ -2,6 +2,11 @@
 # http://symfony.com/doc/current/security.html
 security:
 
+    role_hierarchy:
+        ROLE_MOD: ROLE_USER
+        ROLE_ADMIN: ROLE_MOD
+
+
     encoders:
             # Our user class and the algorithm we'll use to encode passwords
             # http://symfony.com/doc/current/book/security.html#encoding-the-user-s-password

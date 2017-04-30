@@ -19,7 +19,10 @@ class User implements UserInterface
     {
         $this->roles = new ArrayCollection();
         $this->products = new ArrayCollection();
-        $this->cart = [];
+        $this->boughtProducts = new ArrayCollection();
+        $this->setCart(new Cart());
+        $this->setCash(2000);
+
     }
 
     public function __toString()
@@ -64,6 +67,13 @@ class User implements UserInterface
     /**
      * @var string
      *
+     * @ORM\Column(name="cash", type="decimal", precision=11, scale=2)
+     */
+    private $cash;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="firstName", type="string", length=100)
      * @Assert\NotBlank()
      */
@@ -78,7 +88,7 @@ class User implements UserInterface
     private $lastName;
 
     /**
-     * @var Role[]/ArrayCollection
+     * @var Role[]|ArrayCollection
      * @ORM\ManyToMany(targetEntity="WebShopBundle\Entity\Role",inversedBy="users")
      * @ORM\JoinTable(name="user_roles",
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
@@ -88,22 +98,23 @@ class User implements UserInterface
     private $roles;
 
     /**
+     * @var Cart
+     * @ORM\OneToOne(targetEntity="WebShopBundle\Entity\Cart",cascade={"persist"},inversedBy="user")
+     * @ORM\JoinColumn(name="cart_id", referencedColumnName="id")
+     */
+    private $cart;
+
+    /**
      * @var Product[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="WebShopBundle\Entity\Product",mappedBy="seller")
      */
     private $products;
 
     /**
-     * @var array
-     *
-     * @ORM\Column(name="cart",type="array")
+     * @ORM\OneToMany(targetEntity="WebShopBundle\Entity\BoughtProducts", mappedBy="user", cascade={"persist"}, orphanRemoval=TRUE)
      */
-    private $cart;
-    /**
-     * Get id
-     *
-     * @return int
-     */
+    private $boughtProducts;
+
     public function getId()
     {
         return $this->id;
@@ -247,9 +258,13 @@ class User implements UserInterface
      */
     public function getRoles()
     {
-        return array_map(function (Role $r) {
-            return $r->getName();
-        }, $this->roles->toArray());
+        $stringRoles = [];
+        foreach ($this->roles as $role) {
+
+            $stringRoles[] = is_string($role) ? $role:$role->getRole();
+        }
+
+        return $stringRoles;
     }
 
     /**
@@ -289,26 +304,87 @@ class User implements UserInterface
     }
 
     /**
-     * @return array
+     * @return Cart
      */
-    public function getCart(): array
+    public function getCart(): Cart
     {
         return $this->cart;
     }
 
     /**
-     * @param array $cart
+     * @param Cart $cart
      */
-    public function setCart(array $cart)
+    public function setCart(Cart $cart)
     {
         $this->cart = $cart;
     }
 
     /**
-     * @param Product $product
+     * @return string
      */
-    public function addCart(Product $product){
-        $this->cart[] = $product;
+    public function getCash()
+    {
+        return $this->cash;
+    }
+
+    /**
+     * @param string $cash
+     */
+    public function setCash($cash)
+    {
+        $this->cash = $cash;
+    }
+
+
+    /**
+     * @param mixed $boughtProducts
+     */
+    public function setBoughtProducts($boughtProducts)
+    {
+        $this->boughtProducts = $boughtProducts;
+    }
+
+    public function addBoughtProduct(BoughtProducts $job)
+    {
+        if (!$this->boughtProducts->contains($job)) {
+            $this->boughtProducts->add($job);
+            $job->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBoughtProduct(BoughtProducts $boughtProducts)
+    {
+        if ($this->boughtProducts->contains($boughtProducts)) {
+            $this->boughtProducts->removeElement($boughtProducts);
+            $boughtProducts->setUser(null);
+        }
+
+        return $this;
+    }
+
+    public function getBoughtProduct()
+    {
+        return $this->boughtProducts;
+    }
+
+    public function getBoughtProducts()
+    {
+        return array_map(
+            function ($product) {
+                return $product->getProduct();
+            },
+            $this->boughtProducts->toArray()
+        );
+    }
+
+    /**
+     * @param ArrayCollection|Role[] $roles
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
     }
 
 }

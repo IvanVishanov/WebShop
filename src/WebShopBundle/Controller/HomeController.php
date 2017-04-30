@@ -14,7 +14,7 @@ class HomeController extends Controller
      */
     public function indexAction()
     {
-        $products = $this->getDoctrine()->getRepository(Product::class)->findAll();
+        $products = $this->getDoctrine()->getRepository(Product::class)->findProductsWithQuantity();
         return $this->render('default/index.html.twig',['products' => $products]);
     }
 }

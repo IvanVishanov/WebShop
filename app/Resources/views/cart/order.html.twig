@@ -8,11 +8,9 @@
                 <tr>
                     <th class="col-md-1"></th>
                     <th>Product</th>
-                    <th>Available Quantity</th>
-                    <th>Quantity you want</th>
+                    <th>Quantity</th>
                     <th>Price</th>
                     <th>Total</th>
-                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -22,40 +20,38 @@
                                  class="img-responsive center-block"
                                  style="width: 100%" alt="Image"></td>
                         <td>{{ quantity.product.name }}</td>
-                        <td>{{ quantity.product.quantity }}</td>
-                        <td><input style="width: 120px;" type="number" min="1" max="{{ quantity.product.quantity }}" class="form-control text-right" placeholder="Quantity"
+                        <td><input disabled="disabled" style="width: 120px;" type="number" min="1"
+                                   max="{{ quantity.product.quantity }}" class="form-control text-right"
+                                   placeholder="Quantity"
                                    value="{{ quantity.quantity }}"
                                    name="{{ quantity.id }}"
                                    required></td>
                         <td>{{ quantity.product.price }}</td>
                         <td>{{ quantity.total }}</td>
-                        <td class="text-center"><a class="btn btn-warning" href="{{ path('cart_remove',{'id':quantity.id}) }}">Remove</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot>
                 <tr class="text-center">
                     {% for flash_message in app.session.flashBag.get('error') %}
-                        <td colspan = "6">
+                        <td colspan="6">
                             <div class="flash-notice">
                                 {{ flash_message }}
                             </div>
                         </td>
                     {% endfor %}
                 </tr>
-                {% if quantities != false %}
                 <tr class="text-right">
-                    <td>
-                        <a href="{{ path('cart_clear')}}" class="btn btn-danger">Clear cart</a>
-                    </td>
                     <td colspan="6">
-                        <button type="submit" class="btn btn-primary">Update</button>
-                        <a href="{{ path('cart_order',{'token':token})}}" class="btn btn-primary">Order</a>
+                        <a href="{{ path('cart') }}" class="btn btn-primary">Cancel</a>
+                        {% if error != true %}
+                            <a href="{{ path('products_buy',{'token':token }) }}" class="btn btn-primary"> Buy</a>
+                        {% endif %}
                     </td>
                 </tr>
-                {% endif %}
                 </tfoot>
             </table>
         </form>
     </div>
+
 {% endblock %}
