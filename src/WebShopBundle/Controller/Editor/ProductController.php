@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use WebShopBundle\Entity\Category;
 use WebShopBundle\Entity\Product;
+use WebShopBundle\Entity\Promotion;
 use WebShopBundle\Form\ProductType;
 
 /**
@@ -27,6 +28,37 @@ class ProductController extends Controller
         $token = $this->get('security.csrf.token_manager')->refreshToken('product');
 
         return $this->render("editor/products/view.html.twig", ['products' => $products,'token' =>$token]);
+    }
+
+    /**
+     * @Route("editor/products/promotion{id}", name="editor_products_promotion")
+     */
+    public function choosePromotion(Product $product)
+    {
+        $promotionsa = $this->getDoctrine()->getRepository(Promotion::class)->findAll();
+        $promotions = [];
+        foreach($promotionsa as $promotion){
+            if(!in_array($promotion,$product->getPromotions()->toArray())){
+                $promotions[] = $promotion;
+            }
+        }
+        return $this->render("editor/products/promotion.html.twig", ['promotions' => $promotions,'product'=>$product]);
+    }
+
+    /**
+     * @Route("editor/products/promotion/set{id}", name="editor_products_set_promotion")
+     */
+    public function setPromotion(Product $product)
+    {
+        $promotionId = $_POST['promotion'];
+        $promotion = $this->getDoctrine()->getRepository(Promotion::class)->findOneBy(['id' =>$promotionId]);
+        $product->addPromotion($promotion);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($product);
+        $em->flush();
+
+        return $this->redirectToRoute('editor_products');
     }
 
     /**

@@ -1,27 +1,21 @@
 {% extends 'base.html.twig' %}
-{% block title %}Categories{% endblock %}
+
 {% block body %}
     <div class="container">
         <table class="table">
             <thead>
             <tr>
-                <th>Category</th>
-                <th>Products Count</th>
-                <th>Action</th>
+                <th>Promotion</th>
+                <th>Discount</th>
+                <th>Expire Date</th>
             </tr>
             </thead>
             <tbody>
-            {% for category in categories %}
+            {% for promotion in promotions %}
                 <tr>
-                    <td>{{ category.name }}</td>
-                    <td>{{ category.products|length }}</td>
-                    {% if category.deleted %}
-                        <td ><a class="btn btn-success"
-                                href="{{ path('category_restore',{'id':category.id,'token':token}) }}">Restore</a></td>
-                    {% else %}
-                        <td ><a class="btn btn-warning"
-                                href="{{ path('category_delete',{'id':category.id,'token':token}) }}">Remove</a></td>
-                    {% endif %}
+                    <td>{{ promotion.name }}</td>
+                    <td>{{ promotion.discount }}%</td>
+                    <td>{{ promotion.expiredate|date("d/m/Y") }}</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -38,11 +32,15 @@
             <tr>
                 <td colspan="6">
                     <a class="btn btn-success"
-                       href="{{ path('category_add',{'token':token}) }}">Add</a>
+                       href="{{ path('editor_promotion_add',{'token':token}) }}">Add</a>
                 </td>
             </tr>
             </tfoot>
         </table>
     </div>
+{% endblock %}
+
+{% block title %}
+    Promotions
 {% endblock %}
 

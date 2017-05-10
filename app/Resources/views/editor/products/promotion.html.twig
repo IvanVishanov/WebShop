@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <form method="post" action="{{ path('editor_products_set_promotion',{'id':product.id}) }}">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="col-md-1"></th>
+                        <th>Product</th>
+                        <th>Available Quantity</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Deleted</th>
+                        <th>Set Promotion</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><img src="{{ asset('uploads/images/' ~ product.image) }}"
+                                 class="img-responsive center-block"
+                                 style="width: 100%" alt="Image"></td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ product.category.name }}</td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.deleted }}</td>
+                        <td>
+                            <select name="promotion" class="form-control" style="width: 60%" id="product_category">
+                                {% for promotion in promotions %}
+                                    <option value="{{ promotion.id }}">{{ promotion.name }} | {{ promotion.discount }}%
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" type="submit" name="submit">Add</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tr class="text-center">
+                        {% for flash_message in app.session.flashBag.get('error') %}
+                            <td colspan="6">
+                                <div class="flash-notice">
+                                    {{ flash_message }}
+                                </div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </table>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

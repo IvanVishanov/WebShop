@@ -14,7 +14,10 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
     {
         $qb = $this->createQueryBuilder('p');
 
-        $qb->update('WebShopBundle:Product','p')->set('p.deleted',$qb->expr()->literal(true))->where("p.category = $categoryID");
+        $qb->update('WebShopBundle:Product', 'p')
+            ->set('p.deleted', $qb->expr()
+                ->literal(true))
+            ->where("p.category = $categoryID");
         $query = $qb->getQuery();
         $query->execute();
     }
@@ -23,24 +26,57 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
     {
         $qb = $this->createQueryBuilder('p');
 
-        $qb->update('WebShopBundle:Product','p')->set('p.deleted',$qb->expr()->literal(null))->where("p.category = $categoryID");
+        $qb->update('WebShopBundle:Product', 'p')->set('p.deleted', $qb->expr()->literal(null))->where("p.category = $categoryID");
         $query = $qb->getQuery();
         $query->execute();
     }
+
     public function findProductsWithQuantity()
     {
         $em = $this->getEntityManager();
         $qb = $em->createQueryBuilder();
 
-        $q  = $qb->select(array('p'))
+        $q = $qb->select(array('p'))
             ->from('WebShopBundle:Product', 'p')
             ->where(
                 $qb->expr()->gt('p.quantity', 0),
-                $qb->expr()->lt('p.deleted',1)
+                $qb->expr()->lt('p.deleted', 1)
             )
             ->getQuery();
 
         return $q->getResult();
     }
 
+    public function findProductsByCategory($categoryId)
+    {
+        $em = $this->getEntityManager();
+        $qb = $em->createQueryBuilder();
+
+        $q = $qb->select(array('p'))
+            ->from('WebShopBundle:Product', 'p')
+            ->where(
+                $qb->expr()->gt('p.quantity', 0),
+                $qb->expr()->lt('p.deleted', 1),
+                $qb->expr()->eq('p.category', $categoryId)
+            )
+            ->getQuery();
+
+        return $q->getResult();
+    }
+
+    public function findPromotions($product)
+    {
+        $em = $this->getEntityManager();
+        $qb = $em->createQueryBuilder();
+
+        $q = $qb->select(array('p'))
+            ->from('WebShopBundle:Promotion', 'p')
+            ->innerJoin('p.products', 'prod')
+            ->Where(
+                'prod.id <> (:product)'
+            )
+            ->setParameter('product', $product->getId())
+            ->getQuery();
+        return $q->getResult();
+    }
 }

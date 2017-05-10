@@ -51,7 +51,6 @@ class AdminController extends Controller
 
         if ($form->isSubmitted()) {
             $roleRequest = $user->getRoles();
-            dump("here");
             $rolesRepository = $this->getDoctrine()->getRepository(Role::class);
             $role = $rolesRepository->findBy(['name' => $roleRequest]);
             $user->setRoles($role);
@@ -78,13 +77,14 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route ("/admin/deleteBoughtProduct/{userId}/{boughtProductId}" , name="admin_delete_boughtProduct")
+     * @Route ("/admin/deleteBoughtProduct/{userId}/{boughtProductId}/" , name="admin_delete_boughtProduct")
      * @param $userId
      * @param $boughtProductId
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function deleteBoughtProduct($userId,$boughtProductId)
     {
+
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id'=>$userId]);
         $boughtProduct = $this->getDoctrine()->getRepository(BoughtProducts::class)->findOneBy(['id'=>$boughtProductId]);
         if($user == null || $boughtProduct){

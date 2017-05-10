@@ -24,7 +24,11 @@ class CartController extends Controller
      */
     public function AddToCart(Product $product = null)
     {
-        if ($product === null || $product->getQuantity() <= 0 || $product->isDeleted() == true) {
+        if ($product === null ||
+            $product->getQuantity() <= 0 ||
+            $product->isDeleted() == true ||
+            $product->getSeller() == $this->getUser()
+        ) {
             return $this->redirectToRoute("homepage");
         }
         $cart = $this->getUser()->getCart();
@@ -66,10 +70,9 @@ class CartController extends Controller
 
         $quantities = $cart->getQuantities();
         foreach ($quantities as $quantity) {
-            if($quantity->getProduct()->isDeleted()){
+            if ($quantity->getProduct()->isDeleted()) {
                 $cart->removeQuantity($quantity);
-            }
-            else if ($quantity->getProduct()->getQuantity() <= 0) {
+            } else if ($quantity->getProduct()->getQuantity() <= 0) {
                 $cart->removeQuantity($quantity);
             } else if ($quantity->getQuantity() > $quantity->getProduct()->getQuantity()) {
                 $quantity->setQuantity($quantity->getProduct()->getQuantity());

@@ -46,6 +46,7 @@
                     <th class="col-md-2"></th>
                     <th>Product</th>
                     <th>Quantity</th>
+                    <th>Bought For</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -57,6 +58,7 @@
                                  style="width: 100%" alt="Image"></td>
                         <td>{{ boughtProduct.product.name }}</td>
                         <td>{{ boughtProduct.quantity }}</td>
+                        <td>{{ boughtProduct.product.price }}</td>
                         <td><a href="{{ path('products_sell_view', {'id': boughtProduct.id,'token': token}) }}">Sell</a></td>
                     </tr>
                 {% endfor %}

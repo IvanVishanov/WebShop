@@ -19,6 +19,7 @@ class Product
     {
         $this->quantities = new ArrayCollection();
         $this->boughtProducts = new ArrayCollection();
+        $this->promotions = new ArrayCollection();
     }
 
     /**
@@ -96,6 +97,16 @@ class Product
      * @ORM\Column(name="deleted", type="boolean", nullable=true)
      */
     private $deleted = false;
+
+    /**
+     * @var Promotion[]|ArrayCollection
+     * @ORM\ManyToMany(targetEntity="WebShopBundle\Entity\Promotion",inversedBy="products")
+     * @ORM\JoinTable(name="product_promotions",
+     *      joinColumns={@ORM\JoinColumn(name="product_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="promotion_id",referencedColumnName="id")}
+     *      )
+     */
+    private $promotions;
 
     /**
      * Get id
@@ -302,6 +313,28 @@ class Product
     public function setDeleted($deleted)
     {
         $this->deleted = $deleted;
+    }
+
+    /**
+     * @return ArrayCollection|Promotion[]
+     */
+    public function getPromotions()
+    {
+        return $this->promotions;
+    }
+
+    /**
+     * @param ArrayCollection|Promotion[] $promotions
+     */
+    public function setPromotions($promotions)
+    {
+        $this->promotions = $promotions;
+    }
+
+    public function addPromotion($promotion)
+    {
+        $this->promotions->add($promotion);
+        $promotion->addProduct($this);
     }
 
 }

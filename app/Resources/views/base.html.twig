@@ -48,7 +48,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="{{ path('homepage') }}">Home</a></li>
                 <li><a href="{{ path('products_all') }}">Products</a></li>
-                <li><a href="#">Deals</a></li>
+                <li><a href="{{ path('products_deals') }}">Deals</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if app.user %}
@@ -63,6 +63,7 @@
                             <ul class="dropdown-menu">
                                 <li><a href="{{ path('editor_products') }}">Products</a></li>
                                 <li><a href="{{ path('category_view') }}">Categories</a></li>
+                                <li><a href="{{ path('editor_promotion_view') }}">Promotions</a></li>
                                 {% if is_granted("ROLE_ADMIN") %}
                                     <li><a href="{{ path('admin_users_all') }}">Users</a></li>
                                 {% endif %}

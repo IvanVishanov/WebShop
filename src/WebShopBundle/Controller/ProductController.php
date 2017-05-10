@@ -63,15 +63,16 @@ class ProductController extends Controller
     {
         $categoryId = $request->get('category');
         $search = $request->get('search');
-        $products = $this->getDoctrine()->getRepository(Product::class)->findBy(['category' => $categoryId]);
+        $products = $this->getDoctrine()->getRepository(Product::class)->findProductsByCategory($categoryId);
         $categories = $this->getDoctrine()->getRepository(Category::class)->findBy(['deleted' => false]);
         $productsToShow = [];
-
-        foreach ($products as $product) {
-            if (strpos(strtolower($product->getName()), $search) !== false) {
-                $productsToShow[] = $product;
+        if (!empty($search)) {
+            foreach ($products as $product) {
+                if (strpos(strtolower($product->getName()), $search) !== false) {
+                    $productsToShow[] = $product;
+                }
             }
-        }
+        } else $productsToShow = $products;
 
         return $this->render('product/viewAll.html.twig',
             [
@@ -99,6 +100,25 @@ class ProductController extends Controller
     }
 
     /**
+     * @Route("/products/deals", name="products_deals")
+     */
+    public function viewAllProductsPromotions()
+    {
+        $products = $this->getDoctrine()->getRepository(Product::class)->findProductsWithQuantity();
+        $deals = [];
+        foreach ($products as $product) {
+            if (!empty($product->getPromotions()[0])) {
+                $deals[] = $product;
+            }
+        }
+        return $this->render('product/deals.html.twig',
+            [
+                'products' => $deals,
+            ]
+        );
+    }
+
+    /**
      * @Route("/products/buy{token}", name="products_buy")
      */
     public function buyProduct($token)
@@ -110,7 +130,7 @@ class ProductController extends Controller
 
         $user = $this->getUser();
         $cart = $user->getCart();
-        if($user->getCash()- $cart->getTotal()<0){
+        if ($user->getCash() - $cart->getTotal() < 0) {
             $this->addFlash(
                 'error',
                 'You do not have enough money'
@@ -158,7 +178,7 @@ class ProductController extends Controller
      * @param BoughtProducts $boughtProduct
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function sellProduct(BoughtProducts $boughtProduct = null, Request $request,$token)
+    public function sellProduct(BoughtProducts $boughtProduct = null, Request $request, $token)
     {
         if (!$this->isCsrfTokenValid('user', $token)) {
             $this->get('security.csrf.token_manager')->refreshToken('user');
@@ -175,7 +195,7 @@ class ProductController extends Controller
         $product = clone $productToSell;
 
         if ($price <= 0 || $quantity <= 0 || $quantity > $boughtProduct->getQuantity()) {
-            return $this->redirectToRoute('products_sell_view', ['id' =>$boughtProduct->getId()]);
+            return $this->redirectToRoute('products_sell_view', ['id' => $boughtProduct->getId()]);
         }
         $product->setPrice($request->get('price'));
         $product->setQuantity($request->get('quantity'));
@@ -193,20 +213,20 @@ class ProductController extends Controller
     /**
      * @Route("/products/sell/view/{id}/{token}", name="products_sell_view")
      */
-    public function sellProductView(BoughtProducts $boughtProduct = null,$token)
+    public function sellProductView(BoughtProducts $boughtProduct = null, $token)
     {
         if (!$this->isCsrfTokenValid('user', $token)) {
             $this->get('security.csrf.token_manager')->refreshToken('user');
             return $this->redirectToRoute('user_profile');
         }
 
-        if($boughtProduct == null){
+        if ($boughtProduct == null) {
             return $this->redirectToRoute("user_profile");
         }
         if ($this->getUser() != $boughtProduct->getUser()) {
             return $this->redirectToRoute("user_profile");
         }
 
-        return $this->render("product/sell.html.twig", ['product' => $boughtProduct,'token'=>$token]);
+        return $this->render("product/sell.html.twig", ['product' => $boughtProduct, 'token' => $token]);
     }
 }
